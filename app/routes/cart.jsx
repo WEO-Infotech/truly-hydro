@@ -92,7 +92,6 @@ export default function Cart() {
 
   return (
     <div className="cart">
-      <h1>Cart</h1>
       <Suspense fallback={<p>Loading cart ...</p>}>
         <Await errorElement={<div>An error occurred</div>} resolve={cart}>
           {(cart) => {

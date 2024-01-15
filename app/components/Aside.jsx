@@ -13,9 +13,9 @@
  *   id?: string;
  * }}
  */
-export function Aside({children, heading, id = 'aside'}) {
+export function Aside({ children, heading, id = 'aside' }) {
   return (
-    <div aria-modal className="overlay" id={id} role="dialog">
+    <div aria-modal className="overlay header_aside" id={id} role="dialog">
       <button
         className="close-outside"
         onClick={() => {
@@ -24,10 +24,13 @@ export function Aside({children, heading, id = 'aside'}) {
         }}
       />
       <aside>
-        <header>
-          <h3>{heading}</h3>
-          <CloseAside />
-        </header>
+        {heading ?
+          <header>
+            <h3>{heading}</h3>
+            <CloseAside />
+          </header>
+          : null
+        }
         <main>{children}</main>
       </aside>
     </div>

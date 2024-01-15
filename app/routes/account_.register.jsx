@@ -1,10 +1,10 @@
-import {json, redirect} from '@shopify/remix-oxygen';
-import {Form, Link, useActionData} from '@remix-run/react';
+import { json, redirect } from '@shopify/remix-oxygen';
+import { Form, Link, useActionData } from '@remix-run/react';
 
 /**
  * @param {LoaderArgs}
  */
-export async function loader({context}) {
+export async function loader({ context }) {
   const customerAccessToken = await context.session.get('customerAccessToken');
   if (customerAccessToken) {
     return redirect('/account');
@@ -16,12 +16,12 @@ export async function loader({context}) {
 /**
  * @param {ActionArgs}
  */
-export async function action({request, context}) {
+export async function action({ request, context }) {
   if (request.method !== 'POST') {
-    return json({error: 'Method not allowed'}, {status: 405});
+    return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  const {storefront, session} = context;
+  const { storefront, session } = context;
   const form = await request.formData();
   const email = String(form.has('email') ? form.get('email') : '');
   const password = form.has('password') ? String(form.get('password')) : null;
@@ -42,9 +42,9 @@ export async function action({request, context}) {
       throw new Error('Please provide both an email and a password.');
     }
 
-    const {customerCreate} = await storefront.mutate(CUSTOMER_CREATE_MUTATION, {
+    const { customerCreate } = await storefront.mutate(CUSTOMER_CREATE_MUTATION, {
       variables: {
-        input: {email, password},
+        input: { email, password },
       },
     });
 
@@ -58,7 +58,7 @@ export async function action({request, context}) {
     }
 
     // get an access token for the new customer
-    const {customerAccessTokenCreate} = await storefront.mutate(
+    const { customerAccessTokenCreate } = await storefront.mutate(
       REGISTER_LOGIN_MUTATION,
       {
         variables: {
@@ -79,7 +79,7 @@ export async function action({request, context}) {
     );
 
     return json(
-      {error: null, newCustomer},
+      { error: null, newCustomer },
       {
         status: 302,
         headers: {
@@ -90,9 +90,9 @@ export async function action({request, context}) {
     );
   } catch (error) {
     if (error instanceof Error) {
-      return json({error: error.message}, {status: 400});
+      return json({ error: error.message }, { status: 400 });
     }
-    return json({error}, {status: 400});
+    return json({ error }, { status: 400 });
   }
 }
 
@@ -101,60 +101,75 @@ export default function Register() {
   const data = useActionData();
   const error = data?.error || null;
   return (
-    <div className="login">
-      <h1>Register.</h1>
-      <Form method="POST">
-        <fieldset>
-          <label htmlFor="email">Email address</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            placeholder="Email address"
-            aria-label="Email address"
-            // eslint-disable-next-line jsx-a11y/no-autofocus
-            autoFocus
-          />
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            placeholder="Password"
-            aria-label="Password"
-            minLength={8}
-            required
-          />
-          <label htmlFor="passwordConfirm">Re-enter password</label>
-          <input
-            id="passwordConfirm"
-            name="passwordConfirm"
-            type="password"
-            autoComplete="current-password"
-            placeholder="Re-enter password"
-            aria-label="Re-enter password"
-            minLength={8}
-            required
-          />
-        </fieldset>
-        {error ? (
-          <p>
-            <mark>
-              <small>{error}</small>
-            </mark>
-          </p>
-        ) : (
-          <br />
-        )}
-        <button type="submit">Register</button>
-      </Form>
-      <br />
-      <p>
-        <Link to="/account/login">Login →</Link>
-      </p>
+    <div className="login-page">
+      <div className="commonSection">
+        <div className="container-fluid">
+          <div className="login-page-inner">
+            <h2 className='text-center'>Register</h2>
+            <Form method="POST">
+              <fieldset>
+                <div className='form-group mb-3'>
+                  <label htmlFor="email">Email address</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    placeholder="Email address"
+                    aria-label="Email address"
+                    className='form-control w-100'
+                    // eslint-disable-next-line jsx-a11y/no-autofocus
+                    autoFocus
+                  />
+                </div>
+                <div className='form-group mb-3'>
+                  <label htmlFor="password">Password</label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    placeholder="Password"
+                    aria-label="Password"
+                    className='form-control w-100'
+                    minLength={8}
+                    required
+                  />
+                </div>
+                <div className='form-group mb-3'>
+                  <label htmlFor="passwordConfirm">Re-enter password</label>
+                  <input
+                    id="passwordConfirm"
+                    name="passwordConfirm"
+                    type="password"
+                    autoComplete="current-password"
+                    placeholder="Re-enter password"
+                    aria-label="Re-enter password"
+                    className='form-control w-100'
+                    minLength={8}
+                    required
+                  />
+                </div>
+              </fieldset>
+              {error ? (
+                <p className='text-danger mb-2'>
+                  <mark>
+                    <small>{error}</small>
+                  </mark>
+                </p>
+              ) : (
+                null
+              )}
+              <button type="submit" className='btn btn-primary w-100'>Register</button>
+            </Form>
+            <br />
+            <p>
+              Already have an account? <Link to="/account/login" className='link text-danger'>Login</Link>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

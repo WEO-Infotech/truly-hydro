@@ -1,42 +1,46 @@
-import {useLoaderData, Link} from '@remix-run/react';
-import {json} from '@shopify/remix-oxygen';
-import {Pagination, getPaginationVariables, Image} from '@shopify/hydrogen';
+import { useLoaderData, Link } from '@remix-run/react';
+import { json } from '@shopify/remix-oxygen';
+import { Pagination, getPaginationVariables, Image } from '@shopify/hydrogen';
 
 /**
  * @param {LoaderArgs}
  */
-export async function loader({context, request}) {
+export async function loader({ context, request }) {
   const paginationVariables = getPaginationVariables(request, {
     pageBy: 4,
   });
 
-  const {collections} = await context.storefront.query(COLLECTIONS_QUERY, {
+  const { collections } = await context.storefront.query(COLLECTIONS_QUERY, {
     variables: paginationVariables,
   });
 
-  return json({collections});
+  return json({ collections });
 }
 
 export default function Collections() {
   /** @type {LoaderReturnData} */
-  const {collections} = useLoaderData();
+  const { collections } = useLoaderData();
 
   return (
-    <div className="collections">
-      <h1>Collections</h1>
-      <Pagination connection={collections}>
-        {({nodes, isLoading, PreviousLink, NextLink}) => (
-          <div>
-            <PreviousLink>
-              {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
-            </PreviousLink>
-            <CollectionsGrid collections={nodes} />
-            <NextLink>
-              {isLoading ? 'Loading...' : <span>Load more ↓</span>}
-            </NextLink>
-          </div>
-        )}
-      </Pagination>
+    <div className="commonSection collections">
+      <div className="container-fluid">
+        <h1>Collections</h1>
+        <Pagination connection={collections}>
+          {({ nodes, isLoading, PreviousLink, NextLink }) => (
+            <div>
+              {/* <PreviousLink>
+                {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
+              </PreviousLink> */}
+              <CollectionsGrid collections={nodes} />
+              <div className='text-center'>
+                <NextLink className='btn btn-primary'>
+                  {isLoading ? 'Loading...' : <span>Load more</span>}
+                </NextLink>
+              </div>
+            </div>
+          )}
+        </Pagination>
+      </div>
     </div>
   );
 }
@@ -44,16 +48,18 @@ export default function Collections() {
 /**
  * @param {{collections: CollectionFragment[]}}
  */
-function CollectionsGrid({collections}) {
+function CollectionsGrid({ collections }) {
   return (
     <div className="collections-grid">
-      {collections.map((collection, index) => (
-        <CollectionItem
-          key={collection.id}
-          collection={collection}
-          index={index}
-        />
-      ))}
+      <div className="row">
+        {collections.filter((x) => x.image).map((collection, index) => (
+          <CollectionItem
+            key={collection.id}
+            collection={collection}
+            index={index}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -64,24 +70,28 @@ function CollectionsGrid({collections}) {
  *   index: number;
  * }}
  */
-function CollectionItem({collection, index}) {
+function CollectionItem({ collection, index }) {
   return (
-    <Link
-      className="collection-item"
-      key={collection.id}
-      to={`/collections/${collection.handle}`}
-      prefetch="intent"
-    >
-      {collection?.image && (
-        <Image
-          alt={collection.image.altText || collection.title}
-          aspectRatio="1/1"
-          data={collection.image}
-          loading={index < 3 ? 'eager' : undefined}
-        />
-      )}
-      <h5>{collection.title}</h5>
-    </Link>
+    <div className='col-sm-6 col-md-4 col-xl-20' key={collection.id}>
+      <Link
+        className="collection-item"
+        to={`/collections/${collection.handle}`}
+        prefetch="intent"
+      >
+        {collection?.image && (
+          <div className='collection_block_image img-zoom'>
+            <Image
+              alt={collection.image.altText || collection.title}
+              aspectRatio="1/1"
+              sizes="200vw"
+              data={collection.image}
+              loading={index < 3 ? 'eager' : undefined}
+            />
+          </div>
+        )}
+        <h5>{collection.title}</h5>
+      </Link>
+    </div>
   );
 }
 

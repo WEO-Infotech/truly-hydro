@@ -88,7 +88,6 @@ export default function Acccount() {
   return (
     <AccountLayout customer={customer}>
       <br />
-      <br />
       <Outlet context={{customer}} />
     </AccountLayout>
   );
@@ -103,16 +102,17 @@ export default function Acccount() {
 function AccountLayout({customer, children}) {
   const heading = customer
     ? customer.firstName
-      ? `Welcome, ${customer.firstName}`
+      ? `Hello, ${customer.firstName}`
       : `Welcome to your account.`
     : 'Account Details';
 
   return (
-    <div className="account">
-      <h1>{heading}</h1>
-      <br />
+    <div className="account commonSection">
+    <div className="container-fluid">
+      <h3>{heading}</h3>
       <AccountMenu />
       {children}
+    </div>
     </div>
   );
 }
@@ -121,7 +121,6 @@ function AccountMenu() {
   function isActiveStyle({isActive, isPending}) {
     return {
       fontWeight: isActive ? 'bold' : undefined,
-      color: isPending ? 'grey' : 'black',
     };
   }
 
@@ -147,7 +146,7 @@ function AccountMenu() {
 function Logout() {
   return (
     <Form className="account-logout" method="POST" action="/account/logout">
-      &nbsp;<button type="submit">Sign out</button>
+      &nbsp;<button type="submit" className='btn btn-danger btn-sm '>LOGOUT</button>
     </Form>
   );
 }

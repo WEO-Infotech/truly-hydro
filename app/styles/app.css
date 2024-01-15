@@ -1,13 +1,28 @@
 :root {
-  --aside-width: 400px;
-  --cart-aside-summary-height-with-discount: 300px;
-  --cart-aside-summary-height: 250px;
-  --grid-item-width: 355px;
-  --header-height: 64px;
+  --primary: #ffdde7;
+  --primary2: #d6315c;
   --color-dark: #000;
   --color-light: #fff;
+  --primary-font: 'Futura PT Book';
+  --primary-font-med: 'Futura PT Med';
+  --primary-font-bold: 'Futura PT Heavy';
+  --mdExI: 'AwesomeSerifItalic-MdExraTall';
+  --fontReg: 'AwesomeSerif-Regular';
+  --fontRegI: 'AwesomeSerifItalic-Regular';
+  --mdEx: 'AwesomeSerif-MediumExtraTall';
+  --lightI: 'AwesomeSerifItalicVAR-Light';
+}
+html, body {
+    min-height: 100vh;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+}
+body > main{
+  flex: 1 0 auto;
+}
 img {
   border-radius: 4px;
 }
@@ -400,12 +415,6 @@ aside li {
 .product-image img {
   height: auto;
   width: 100%;
-}
-
-.product-main {
-  align-self: start;
-  position: sticky;
-  top: 6rem;
 }
 
 .product-price-on-sale {

@@ -1,4 +1,4 @@
-import {json, redirect} from '@shopify/remix-oxygen';
+import { json, redirect } from '@shopify/remix-oxygen';
 import {
   Form,
   useActionData,
@@ -10,13 +10,13 @@ import {
  * @type {V2_MetaFunction}
  */
 export const meta = () => {
-  return [{title: 'Profile'}];
+  return [{ title: 'Profile' }];
 };
 
 /**
  * @param {LoaderArgs}
  */
-export async function loader({context}) {
+export async function loader({ context }) {
   const customerAccessToken = await context.session.get('customerAccessToken');
   if (!customerAccessToken) {
     return redirect('/account/login');
@@ -27,17 +27,17 @@ export async function loader({context}) {
 /**
  * @param {ActionArgs}
  */
-export async function action({request, context}) {
-  const {session, storefront} = context;
+export async function action({ request, context }) {
+  const { session, storefront } = context;
 
   if (request.method !== 'PUT') {
-    return json({error: 'Method not allowed'}, {status: 405});
+    return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
   const form = await request.formData();
   const customerAccessToken = await session.get('customerAccessToken');
   if (!customerAccessToken) {
-    return json({error: 'Unauthorized'}, {status: 401});
+    return json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -77,8 +77,8 @@ export async function action({request, context}) {
     // check for mutation errors
     if (updated.customerUpdate?.customerUserErrors?.length) {
       return json(
-        {error: updated.customerUpdate?.customerUserErrors[0]},
-        {status: 400},
+        { error: updated.customerUpdate?.customerUserErrors[0] },
+        { status: 400 },
       );
     }
 
@@ -91,7 +91,7 @@ export async function action({request, context}) {
     }
 
     return json(
-      {error: null, customer: updated.customerUpdate?.customer},
+      { error: null, customer: updated.customerUpdate?.customer },
       {
         headers: {
           'Set-Cookie': await session.commit(),
@@ -99,13 +99,13 @@ export async function action({request, context}) {
       },
     );
   } catch (error) {
-    return json({error: error.message, customer: null}, {status: 400});
+    return json({ error: error.message, customer: null }, { status: 400 });
   }
 }
 
 export default function AccountProfile() {
   const account = useOutletContext();
-  const {state} = useNavigation();
+  const { state } = useNavigation();
   /** @type {ActionReturnData} */
   const action = useActionData();
   const customer = action?.customer ?? account?.customer;
@@ -115,100 +115,150 @@ export default function AccountProfile() {
       <h2>My profile</h2>
       <br />
       <Form method="PUT">
-        <legend>Personal information</legend>
-        <fieldset>
-          <label htmlFor="firstName">First name</label>
-          <input
-            id="firstName"
-            name="firstName"
-            type="text"
-            autoComplete="given-name"
-            placeholder="First name"
-            aria-label="First name"
-            defaultValue={customer.firstName ?? ''}
-            minLength={2}
-          />
-          <label htmlFor="lastName">Last name</label>
-          <input
-            id="lastName"
-            name="lastName"
-            type="text"
-            autoComplete="family-name"
-            placeholder="Last name"
-            aria-label="Last name"
-            defaultValue={customer.lastName ?? ''}
-            minLength={2}
-          />
-          <label htmlFor="phone">Mobile</label>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            autoComplete="tel"
-            placeholder="Mobile"
-            aria-label="Mobile"
-            defaultValue={customer.phone ?? ''}
-          />
-          <label htmlFor="email">Email address</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            placeholder="Email address"
-            aria-label="Email address"
-            defaultValue={customer.email ?? ''}
-          />
-          <div className="account-profile-marketing">
-            <input
-              id="acceptsMarketing"
-              name="acceptsMarketing"
-              type="checkbox"
-              placeholder="Accept marketing"
-              aria-label="Accept marketing"
-              defaultChecked={customer.acceptsMarketing}
-            />
-            <label htmlFor="acceptsMarketing">
-              &nbsp; Subscribed to marketing communications
-            </label>
+        <div className='row justify-content-between'>
+          <div className='col-md-6'>
+            <legend>Personal information</legend>
+            <fieldset>
+              <div className='row'>
+                <div className='col-md-6'>
+                  <div className='form-group mb-3'>
+                    <label htmlFor="firstName">First name</label>
+                    <input
+                      id="firstName"
+                      name="firstName"
+                      type="text"
+                      autoComplete="given-name"
+                      placeholder="First name"
+                      aria-label="First name"
+                      defaultValue={customer.firstName ?? ''}
+                      minLength={2}
+                      className='form-control sm'
+                    />
+                  </div>
+                </div>
+                <div className='col-md-6'>
+                  <div className='form-group mb-3'>
+                    <label htmlFor="lastName">Last name</label>
+                    <input
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      autoComplete="family-name"
+                      placeholder="Last name"
+                      aria-label="Last name"
+                      defaultValue={customer.lastName ?? ''}
+                      minLength={2}
+                      className='form-control sm'
+                    />
+                  </div>
+                </div>
+                <div className='col-md-6'>
+                  <div className='form-group mb-3'>
+                    <label htmlFor="phone">Mobile</label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      autoComplete="tel"
+                      placeholder="Mobile"
+                      aria-label="Mobile"
+                      defaultValue={customer.phone ?? ''}
+                      className='form-control sm'
+                    />
+                  </div>
+                </div>
+                <div className='col-md-6'>
+                  <div className='form-group mb-3'>
+                    <label htmlFor="email">Email address</label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      placeholder="Email address"
+                      aria-label="Email address"
+                      defaultValue={customer.email ?? ''}
+                      className='form-control sm'
+                    />
+                  </div>
+                </div>
+                <div className='col-md-12'>
+                  <div className='form-group mb-3'>
+                    <div className="account-profile-marketing">
+                      <input
+                        id="acceptsMarketing"
+                        name="acceptsMarketing"
+                        type="checkbox"
+                        placeholder="Accept marketing"
+                        aria-label="Accept marketing"
+                        defaultChecked={customer.acceptsMarketing}
+                      />
+                      <label htmlFor="acceptsMarketing">
+                        &nbsp; Subscribed to marketing communications
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
           </div>
-        </fieldset>
-        <br />
-        <legend>Change password (optional)</legend>
-        <fieldset>
-          <label htmlFor="currentPassword">Current password</label>
-          <input
-            id="currentPassword"
-            name="currentPassword"
-            type="password"
-            autoComplete="current-password"
-            placeholder="Current password"
-            aria-label="Current password"
-            minLength={8}
-          />
-
-          <label htmlFor="newPassword">New password</label>
-          <input
-            id="newPassword"
-            name="newPassword"
-            type="password"
-            placeholder="New password"
-            aria-label="New password"
-            minLength={8}
-          />
-
-          <label htmlFor="newPasswordConfirm">New password (confirm)</label>
-          <input
-            id="newPasswordConfirm"
-            name="newPasswordConfirm"
-            type="password"
-            placeholder="New password (confirm)"
-            aria-label="New password confirm"
-            minLength={8}
-          />
-          <small>Passwords must be at least 8 characters.</small>
-        </fieldset>
+          <div className='col-md-5'>
+            <legend>Change password (optional)</legend>
+            <fieldset>
+              <div className='row'>
+                <div className='col-md-12'>
+                  <div className='row'>
+                    <div className='col-md-6'>
+                      <div className='form-group mb-3'>
+                        <label htmlFor="currentPassword">Current password</label>
+                        <input
+                          id="currentPassword"
+                          name="currentPassword"
+                          type="password"
+                          autoComplete="current-password"
+                          placeholder="Current password"
+                          aria-label="Current password"
+                          minLength={4}
+                          className='form-control sm'
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className='col-md-6'>
+                  <div className='form-group mb-3'>
+                    <label htmlFor="newPassword">New password</label>
+                    <input
+                      id="newPassword"
+                      name="newPassword"
+                      type="password"
+                      placeholder="New password"
+                      aria-label="New password"
+                      minLength={4}
+                      className='form-control sm'
+                    />
+                  </div>
+                </div>
+                <div className='col-md-6'>
+                  <div className='form-group mb-3'>
+                    <label htmlFor="newPasswordConfirm">Confirm new password</label>
+                    <input
+                      id="newPasswordConfirm"
+                      name="newPasswordConfirm"
+                      type="password"
+                      placeholder="Confirm new password"
+                      aria-label="Confirm new password"
+                      minLength={4}
+                      className='form-control sm'
+                    />
+                    <small>Passwords must be at least 4 characters.</small>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
         {action?.error ? (
           <p>
             <mark>
@@ -218,7 +268,7 @@ export default function AccountProfile() {
         ) : (
           <br />
         )}
-        <button type="submit" disabled={state !== 'idle'}>
+        <button type="submit" className='btn btn-primary btn-sm' disabled={state !== 'idle'}>
           {state !== 'idle' ? 'Updating' : 'Update'}
         </button>
       </Form>

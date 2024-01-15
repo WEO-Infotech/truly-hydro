@@ -1,10 +1,10 @@
-import {json, redirect} from '@shopify/remix-oxygen';
-import {Form, Link, useActionData} from '@remix-run/react';
+import { json, redirect } from '@shopify/remix-oxygen';
+import { Form, Link, useActionData } from '@remix-run/react';
 
 /**
  * @param {LoaderArgs}
  */
-export async function loader({context}) {
+export async function loader({ context }) {
   const customerAccessToken = await context.session.get('customerAccessToken');
   if (customerAccessToken) {
     return redirect('/account');
@@ -16,13 +16,13 @@ export async function loader({context}) {
 /**
  * @param {ActionArgs}
  */
-export async function action({request, context}) {
-  const {storefront} = context;
+export async function action({ request, context }) {
+  const { storefront } = context;
   const form = await request.formData();
   const email = form.has('email') ? String(form.get('email')) : null;
 
   if (request.method !== 'POST') {
-    return json({error: 'Method not allowed'}, {status: 405});
+    return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
   try {
@@ -30,16 +30,16 @@ export async function action({request, context}) {
       throw new Error('Please provide an email.');
     }
     await storefront.mutate(CUSTOMER_RECOVER_MUTATION, {
-      variables: {email},
+      variables: { email },
     });
 
-    return json({resetRequested: true});
+    return json({ resetRequested: true });
   } catch (error) {
     const resetRequested = false;
     if (error instanceof Error) {
-      return json({error: error.message, resetRequested}, {status: 400});
+      return json({ error: error.message, resetRequested }, { status: 400 });
     }
-    return json({error, resetRequested}, {status: 400});
+    return json({ error, resetRequested }, { status: 400 });
   }
 }
 
@@ -48,61 +48,72 @@ export default function Recover() {
   const action = useActionData();
 
   return (
-    <div className="account-recover">
-      <div>
-        {action?.resetRequested ? (
-          <>
-            <h1>Request Sent.</h1>
-            <p>
-              If that email address is in our system, you will receive an email
-              with instructions about how to reset your password in a few
-              minutes.
-            </p>
-            <br />
-            <Link to="/account/login">Return to Login</Link>
-          </>
-        ) : (
-          <>
-            <h1>Forgot Password.</h1>
-            <p>
-              Enter the email address associated with your account to receive a
-              link to reset your password.
-            </p>
-            <br />
-            <Form method="POST">
-              <fieldset>
-                <label htmlFor="email">Email</label>
-                <input
-                  aria-label="Email address"
-                  autoComplete="email"
-                  // eslint-disable-next-line jsx-a11y/no-autofocus
-                  autoFocus
-                  id="email"
-                  name="email"
-                  placeholder="Email address"
-                  required
-                  type="email"
-                />
-              </fieldset>
-              {action?.error ? (
-                <p>
-                  <mark>
-                    <small>{action.error}</small>
-                  </mark>
-                </p>
-              ) : (
-                <br />
-              )}
-              <button type="submit">Request Reset Link</button>
-            </Form>
-            <div>
-              <br />
-              <p>
-                <Link to="/account/login">Login →</Link>
-              </p>
+    <div className="login-page">
+      <div className="commonSection">
+        <div className="container-fluid">
+          <div className="login-page-inner">
+            <div className="account-recover">
+              <div>
+                {action?.resetRequested ? (
+                  <>
+                    <h1>Request Sent.</h1>
+                    <p>
+                      If that email address is in our system, you will receive an email
+                      with instructions about how to reset your password in a few
+                      minutes.
+                    </p>
+                    <br />
+                    <Link to="/account/login">Return to Login</Link>
+                  </>
+                ) : (
+                  <>
+                    <h1>Forgot Password.</h1>
+                    <p>
+                      Enter the email address associated with your account to receive a
+                      link to reset your password.
+                    </p>
+                    <br />
+                    <Form method="POST">
+                      <fieldset>
+                        <div className='form-group mb-3'>
+                          <label htmlFor="email">Email</label>
+                          <input
+                            aria-label="Email address"
+                            autoComplete="email"
+                            // eslint-disable-next-line jsx-a11y/no-autofocus
+                            autoFocus
+                            id="email"
+                            name="email"
+                            placeholder="Email address"
+                            required
+                            type="email"
+                            className='form-control w-100'
+                          />
+                        </div>
+                      </fieldset>
+                      {action?.error ? (
+                        <p>
+                          <mark>
+                            <small>{action.error}</small>
+                          </mark>
+                        </p>
+                      ) : (
+                        <br />
+                      )}
+                      <button type="submit" className='btn btn-primary w-100'>Request Reset Password</button>
+                    </Form>
+                    <div>
+                      <br />
+                      <p>
+                        <Link to="/account/login" className='link text-danger'>Back to Login</Link>
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </div>
   );

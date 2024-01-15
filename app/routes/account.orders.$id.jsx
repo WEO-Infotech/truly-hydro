@@ -57,6 +57,7 @@ export async function loader({params, context}) {
 export default function OrderRoute() {
   /** @type {LoaderReturnData} */
   const {order, lineItems, discountValue, discountPercentage} = useLoaderData();
+  console.log("order id: ", order);
   return (
     <div className="account-order">
       <h2>Order {order.name}</h2>
@@ -79,7 +80,7 @@ export default function OrderRoute() {
             ))}
           </tbody>
           <tfoot>
-            {((discountValue && discountValue.amount) ||
+            {((discountValue && discountValue?.amount) ||
               discountPercentage) && (
               <tr>
                 <th scope="row" colSpan={3}>
@@ -172,29 +173,30 @@ export default function OrderRoute() {
  * @param {{lineItem: OrderLineItemFullFragment}}
  */
 function OrderLineRow({lineItem}) {
+  console.log("lineItem: ", lineItem);
   return (
-    <tr key={lineItem.variant.id}>
+    <tr key={lineItem?.variant?.id}>
       <td>
         <div>
-          <Link to={`/products/${lineItem.variant.product.handle}`}>
+          <Link to={`/products/${lineItem?.variant?.product?.handle}`}>
             {lineItem?.variant?.image && (
               <div>
-                <Image data={lineItem.variant.image} width={96} height={96} />
+                <Image data={lineItem?.variant?.image} width={96} height={96} />
               </div>
             )}
           </Link>
           <div>
-            <p>{lineItem.title}</p>
-            <small>{lineItem.variant.title}</small>
+            <p>{lineItem?.title}</p>
+            <small>{lineItem?.variant?.title}</small>
           </div>
         </div>
       </td>
       <td>
-        <Money data={lineItem.variant.price} />
+        <Money data={lineItem?.variant?.price} />
       </td>
-      <td>{lineItem.quantity}</td>
+      <td>{lineItem?.quantity}</td>
       <td>
-        <Money data={lineItem.discountedTotalPrice} />
+        <Money data={lineItem?.discountedTotalPrice} />
       </td>
     </tr>
   );
